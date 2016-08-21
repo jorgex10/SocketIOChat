@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="styles.css">
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<title>Socket IO - Chat</title>
+	</head>
+	<body>
+		<div id="div-container">
+			<div id="framecontentTop">
+				<div class="title">
+					<h1>Socket IO - Chat</h1>
+				</div>
+			</div>
+			<div id="framecontentBottom">
+				<div id="control-group" class="panel panel-default">
+				  <div class="panel-body">
+						<div class="col-md-11">
+				  		<input id="m" autocomplete="off" class="form-control" placeholder="Type your message here..." />
+						</div>
+						<div class="col-md-1">
+					  	<button id="send" class="btn btn-success">Send</button>
+						</div>
+				  </div>
+				</div>
+			</div>
+			<div >
+				<div id="maincontent" class="panel panel-primary">
+					<div id="panel-header" class="panel-heading">
+						<span class="glyphicon glyphicon-comment"></span> Coach Chat
+					</div>
+					<div class="panel-body">
+						<div id="wrapper">
+							<ul id="messages" class="chat">
+								<li class="right clearfix hidden">
+									<div class="chat-body clearfix">
+										<div class="header">
+											<strong id="nickname" class="pull-right primary-font">You</strong>
+										</div>
+										<p id="body">
+											Hi Jen! Laura has been missing deadlines for a few weeks and I'm having trouble motivating her to move faster.
+										</p>
+										<hr>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script>
+	  var socket = io();
+  	var li = $('#messages').find('li:first');
+	  $('#send').click(function(){
+	    socket.emit('chat message', $('#m').val());
+	    $('#m').val('');
+	    return false;
+	  });
+	  socket.on('chat message', function(msg){
+	  	var li = $('#messages').find('li:first').clone(true).appendTo("#messages");
+	  	var messages = $("#maincontent");
+	  	li.removeClass("hidden");
+	  	li.find("#body").text(msg);
+			var messages_to_bottom = function() {
+			  return messages.scrollTop(messages.prop("scrollHeight"));
+			};
+			messages_to_bottom();
+	  });
+	</script>
+</html>
